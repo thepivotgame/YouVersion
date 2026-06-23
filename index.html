@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>How to Play — PIVOT</title>
+    
+    <script>
+(function () {
+    try {
+    var saved = JSON.parse(localStorage.getItem('pivot_result_votd') || 'null');
+    if (saved) {
+        window.location.replace('play.html');
+    }
+    } catch (e) {}
+})();
+</script>
+    
+    <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(160deg, #0d3349 0%, #1a5276 55%, #0d3349 100%);
+        font-family: Georgia, serif;
+        color: #f0ede6;
+        padding: 14px 16px 22px;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    .title-block {
+        text-align: center;
+        margin-bottom: 12px;
+    }
+
+    .game-name {
+        font-size: 26px;
+        color: #f9d976;
+        letter-spacing: 3px;
+        display: inline;
+    }
+
+    .how-to {
+        font-size: 14px;
+        color: #fff;
+        letter-spacing: 2px;
+        display: inline;
+        margin-left: 8px;
+        font-weight: normal;
+    }
+
+    .layout {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .left-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        flex-shrink: 0;
+    }/* Grid label + frame */
+    .grid-label {
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: #a8c8e8;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .grid-frame {
+        background: rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        padding: 5px;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+
+    .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 26px);
+        grid-template-rows: repeat(6, 26px);
+        gap: 2px;
+    }
+
+    .mc {
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        border-radius: 4px;
+        border: 1.5px solid transparent;
+        background: rgba(255, 255, 255, 0.09);
+        color: #f0ede6;
+    }
+
+    .mc.found {
+        background: #2ecc71;
+        color: #fff;
+        border-color: #27ae60;
+    }
+
+    .mc.found2 {
+        background: #27ae60;
+        color: #fff;
+        border-color: #1e8449;
+    }
+
+    .mc.pivot {
+        background: #e8734a;
+        color: #fff;
+        border-color: #c85a2e;
+    }
+
+    .section-label {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        color: #a8c8e8;
+        text-transform: uppercase;
+        line-height: 1.4;
+        margin-bottom: 3px;
+    }
+
+    .pool-row {
+        display: flex;
+        gap: 3px;
+        flex-wrap: wrap;
+        margin-bottom: 3px;
+    }
+
+    .mp {
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        border-radius: 4px;
+        background: rgba(30, 60, 80, 0.95);
+        color: #f9d976;
+        border: 1.5px solid rgba(249, 217, 118, 0.55);
+    }
+
+    .wrow {
+        display: flex;
+        gap: 3px;
+        margin-bottom: 3px;
+    }
+
+    .wc {
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        border-radius: 3px;
+        color: #fff;
+    }
+
+    .wc.absent {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .wc.present {
+        background: #f39c12;
+    }
+
+    .wc.correct {
+        background: #2ecc71;
+    }/* Steps */
+    .steps {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .step {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        padding: 8px 10px;
+    }
+
+    .step-gap {
+        height: 26px;
+    }
+
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 3px;
+    }
+
+    .snum {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .step p {
+        font-size: 11px;
+        line-height: 1.5;
+        color: #b8d4e8;
+    }
+
+    strong.hl {
+        color: #f0ede6;
+    }
+
+    .cta {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background: #f9d976;
+        color: #0d3349;
+        border: none;
+        border-radius: 11px;
+        font-family: Georgia, serif;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        -webkit-appearance: none;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 9px;
+        color: rgba(168, 200, 232, 0.3);
+        margin-top: 12px;
+        letter-spacing: 2px;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="title-block">
+        <span class="game-name">PIVOT</span>
+        <span class="how-to">· How to Play</span>
+    </div>
+
+    <div class="layout">
+
+        <!-- LEFT col -->
+        <div class="left-col">
+
+            <!-- Word Search label + framed grid -->
+            <p class="grid-label">Word Search</p>
+            <div class="grid-frame">
+                <div class="mini-grid">
+                    <div class="mc">K</div>
+                    <div class="mc found">S</div>
+                    <div class="mc found">H</div>
+                    <div class="mc found">E</div>
+                    <div class="mc found">L</div>
+                    <div class="mc found">L</div>
+                    <div class="mc">T</div>
+                    <div class="mc">D</div>
+                    <div class="mc">N</div>
+                    <div class="mc">B</div>
+                    <div class="mc">I</div>
+                    <div class="mc">P</div>
+                    <div class="mc pivot">C</div>
+                    <div class="mc pivot">O</div>
+                    <div class="mc pivot">R</div>
+                    <div class="mc pivot">A</div>
+                    <div class="mc pivot">L</div>
+                    <div class="mc found2">W</div>
+                    <div class="mc">U</div>
+                    <div class="mc">F</div>
+                    <div class="mc">M</div>
+                    <div class="mc">G</div>
+                    <div class="mc">Y</div>
+                    <div class="mc found2">A</div>
+                    <div class="mc">J</div>
+                    <div class="mc">X</div>
+                    <div class="mc">E</div>
+                    <div class="mc">N</div>
+                    <div class="mc">R</div>
+                    <div class="mc found2">V</div>
+                    <div class="mc">B</div>
+                    <div class="mc">I</div>
+                    <div class="mc">O</div>
+                    <div class="mc">T</div>
+                    <div class="mc">S</div>
+                    <div class="mc found2">E</div>
+                </div>
+            </div>
+
+            <!-- Letter Inventory -->
+            <div style="margin-bottom:8px;">
+                <p class="section-label">
+                    Complete the word search
+                    <br>
+                    to reduce letter inventory
+                </p>
+                <div class="pool-row">
+                    <div class="mp">A</div>
+                    <div class="mp">B</div>
+                    <div class="mp">E</div>
+                    <div class="mp">I</div>
+                    <div class="mp">M</div>
+                </div>
+                <div class="pool-row">
+                    <div class="mp">N</div>
+                    <div class="mp">O</div>
+                    <div class="mp">R</div>
+                    <div class="mp">T</div>
+                    <div class="mp">U</div>
+                </div>
+                <div class="pool-row">
+                    <div class="mp">V</div>
+                </div>
+            </div>
+
+            <!-- Word Guesses -->
+            <div>
+                <p class="section-label">
+                    Play like Wordle
+                    <br>
+                    to find today's word
+                </p>
+                <div class="wrow">
+                    <div class="wc correct">M</div>
+                    <div class="wc present">A</div>
+                    <div class="wc absent">N</div>
+                    <div class="wc absent">O</div>
+                    <div class="wc absent">R</div>
+                </div>
+                <div class="wrow">
+                    <div class="wc correct">M</div>
+                    <div class="wc correct">A</div>
+                    <div class="wc correct">U</div>
+                    <div class="wc correct">V</div>
+                    <div class="wc correct">E</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: Steps -->
+        <div class="steps">
+
+            <div class="step-gap"></div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="snum" style="background:#2ecc71;color:#fff;">1</div>
+                    <span style="font-size:13px;font-weight:bold;color:#2ecc71;letter-spacing:0.5px;">FIND 7 WORDS</span>
+                </div>
+                <p>
+                    Play a word search to find the 
+                    <strong class="hl">PIVOT WORD</strong>
+                    .
+                </p>
+            </div>
+
+            <div class="step-gap"></div>
+            <div class="step-gap"></div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="snum" style="background:#e8734a;color:#fff;">2</div>
+                    <span style="font-size:13px;font-weight:bold;color:#e8734a;letter-spacing:0.5px;">CRACK THE PIVOT</span>
+                </div>
+                <p>
+                    The 
+                    <strong class="hl">PIVOT WORD</strong>
+                     appears in orange, and unlocks a clue to find the word of the day.
+                </p>
+            </div>
+
+            <div class="step-gap"></div>
+            <div class="step-gap"></div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="snum" style="background:rgba(255,255,255,0.2);color:#fff;">3</div>
+                    <span style="font-size:13px;font-weight:bold;color:#fff;letter-spacing:0.5px;">GUESS THE WORD</span>
+                </div>
+                <p>Play like Wordle to find the word of the day.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <a href="play.html" class="cta">Let's Play →</a>
+
+    <p class="footer">PIVOT · DAILY PUZZLE</p>
+
+</body>
+</html>
