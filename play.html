@@ -2566,21 +2566,20 @@ function openNarration() {
     // First open — autoplay from beginning
     setTimeout(narrToggle, 200);
   } else {
-    // Second+ open — no autoplay; show all puzzle words gold for browsing
-    narrAllSpans.forEach(s => s.classList.remove('nactive'));
-    // Mark up to last word as spoken so gold words show correctly
-    if (narrLastWord > 0) narrMarkSpoken(narrLastWord);
-    // If completed show VOTD
+    // Second+ open — no autoplay
+    // Span classes already reflect last session state — don't touch them
+    // unless narration fully completed, in which case show full gold + VOTD
     if (narrCompleted) {
       narrMarkAllSpoken();
       document.getElementById('narr-votd').style.display = 'block';
     }
+    // If partial, spans are already correct and Play will resume from narrLastWord
   }
 }
 
 function closeNarration() {
-  // Record position before stopping
-  narrLastWord = narrCurrentWord;
+  // Record position before stopping (only if not completed — completed resets to 0)
+  if (narrPlaying && !narrCompleted) narrLastWord = narrCurrentWord;
   // Always stop audio immediately
   if (narrEndTimer) { clearInterval(narrEndTimer); narrEndTimer = null; }
   speechSynthesis.cancel();
